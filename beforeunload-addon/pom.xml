@@ -27,7 +27,7 @@
 	</developers>
 
 	<properties>
-	    <beforeunload.version>0.1.0</beforeunload.version>
+	    <beforeunload.version>0.2.0</beforeunload.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- May be overridden by the build system -->
@@ -241,7 +241,7 @@
 								<Implementation-Title>BeforeUnload documentation</Implementation-Title>
 							</manifestEntries>
 						</archive>
-						<sourceEncoding>UTF-8</sourceEncoding>
+						<encoding>UTF-8</encoding>
 						<links>
 							<link>http://docs.oracle.com/javase/6/docs/api/</link>
 							<link>https://vaadin.com/api/</link>

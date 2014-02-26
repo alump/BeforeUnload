@@ -25,6 +25,8 @@ import com.vaadin.client.extensions.AbstractExtensionConnector;
 import com.vaadin.shared.ui.Connect;
 import org.vaadin.alump.beforeunload.gwt.client.share.BeforeUnloadState;
 
+import java.util.Date;
+
 /**
  * Connector for BeforeUnload extension
  */
@@ -33,11 +35,13 @@ public class BeforeUnloadConnector extends AbstractExtensionConnector {
 
     private HandlerRegistration winCloseRegistration;
 
+    private static long temporaryDisabled = new Date().getTime();
+
     private final Window.ClosingHandler closingHandler = new Window.ClosingHandler() {
 
         @Override
         public void onWindowClosing(Window.ClosingEvent closingEvent) {
-            if(getState().message != null) {
+            if(!isTemporaryDisabled() && getState().message != null) {
                 closingEvent.setMessage(getState().message);
             }
         }
@@ -65,6 +69,25 @@ public class BeforeUnloadConnector extends AbstractExtensionConnector {
 
     public BeforeUnloadState getState() {
         return (BeforeUnloadState)super.getState();
+    }
+
+    /**
+     * Way to temporary disable verification. This can be used to avoid
+     * error when forcing page reload on client side (eg. connection
+     * error at ApplicationConnection).
+     * @param millisecs How long exit verification should be disabled
+     *                  in milliseconds.
+     */
+    public static void disableTemporary(long millisecs) {
+        temporaryDisabled = new Date().getTime() + millisecs;
+    }
+
+    /**
+     * Check if exit verification is temporary disabled right now.
+     * @return true if disabled
+     */
+    public static boolean isTemporaryDisabled() {
+        return new Date().getTime() < temporaryDisabled;
     }
 
 

@@ -10,7 +10,7 @@
 	<version>${beforeunload.version}</version>
 
     <properties>
-        <beforeunload.version>0.2.0</beforeunload.version>
+        <beforeunload.version>0.2.1-SNAPSHOT</beforeunload.version>
         <Implementation-Version>${project.version}</Implementation-Version>
 		
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

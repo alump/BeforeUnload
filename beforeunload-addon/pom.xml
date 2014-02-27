@@ -27,7 +27,7 @@
 	</developers>
 
 	<properties>
-	    <beforeunload.version>0.2.0</beforeunload.version>
+	    <beforeunload.version>0.2.1-SNAPSHOT</beforeunload.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- May be overridden by the build system -->

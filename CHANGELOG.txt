@@ -1,6 +1,7 @@
 ### 0.2.0 - 2013-02-26 ###
 * Adds client side API for disabling exit verification. Can be eg. used when
   force reloading page after connection error.
+  https://github.com/alump/BeforeUnload/wiki/How-to-disable-verification-dialog-when-connection-error
 
 ### 0.1.0 - 2013-02-25 ###
 * Initial release

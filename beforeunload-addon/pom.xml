@@ -5,7 +5,7 @@
 	<artifactId>beforeunload-addon</artifactId>
 	<packaging>jar</packaging>
 	<name>BeforeUnload addon</name>
-	<version>${beforeunload.version}</version>
+	<version>0.2.1-SNAPSHOT</version>
 
     <description>BeforeUnload Vaadin 7 addon</description>
 
@@ -27,13 +27,12 @@
 	</developers>
 
 	<properties>
-	    <beforeunload.version>0.2.1-SNAPSHOT</beforeunload.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- May be overridden by the build system -->
 		<license.short.name>apache2</license.short.name>
-		<vaadin.version>7.1.11</vaadin.version>
-		<vaadin.plugin.version>7.1.11</vaadin.plugin.version>
+		<vaadin.version>7.1.15</vaadin.version>
+		<vaadin.plugin.version>7.1.15</vaadin.plugin.version>
 
 		<Implementation-Version>${project.version}</Implementation-Version>
 		<!-- Must not change this because of the Directory -->

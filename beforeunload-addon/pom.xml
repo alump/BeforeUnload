@@ -31,14 +31,15 @@
 
 		<!-- May be overridden by the build system -->
 		<license.short.name>apache2</license.short.name>
-		<vaadin.version>7.1.15</vaadin.version>
-		<vaadin.plugin.version>7.1.15</vaadin.plugin.version>
+		<vaadin.version>7.2.6</vaadin.version>
+		<vaadin.plugin.version>7.2.6</vaadin.plugin.version>
 
 		<Implementation-Version>${project.version}</Implementation-Version>
 		<!-- Must not change this because of the Directory -->
 		<Implementation-Title>BeforeUnload</Implementation-Title>
 		<Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
 		<Vaadin-Addon>BeforeUnload-${project.version}.jar</Vaadin-Addon>
+		<Vaadin-Widgetset>org.vaadin.alump.beforeunload.gwt.BeforeUnloadWidgetSet</Vaadin-Widgetset>
 
 	</properties>
 
@@ -141,7 +142,7 @@
 							<Vaadin-Package-Version>1</Vaadin-Package-Version>
 
 							<!-- Comma-separated list of widgetsets in the package -->
-							<Vaadin-Widgetsets>org.vaadin.alump.beforeunload.gwt.BeforeUnloadWidgetSet</Vaadin-Widgetsets>
+							<Vaadin-Widgetsets>${Vaadin-Widgetset}</Vaadin-Widgetsets>
 						</manifestEntries>
 					</archive>
 					<!-- exclude other META-INF data under build directory -->
@@ -158,7 +159,7 @@
 				<version>${vaadin.plugin.version}</version>
 				<configuration>
 					<modules>
-						<module>org.vaadin.alump.beforeunload.gwt.BeforeUnloadWidgetSet</module>
+						<module>${Vaadin-Widgetset}</module>
 					</modules>
 					<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
 					<runTarget>xsite</runTarget>

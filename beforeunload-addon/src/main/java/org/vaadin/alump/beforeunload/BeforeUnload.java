@@ -130,7 +130,7 @@ public class BeforeUnload extends AbstractExtension {
 
     /**
      * Define verification message shown to user
-     * @param message
+     * @param message Message shown to user
      */
     protected void setMessage(String message) {
         getState().message = message;

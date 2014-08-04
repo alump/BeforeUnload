@@ -16,8 +16,8 @@
 		
 		<!-- May be overridden by the build system -->
 		<license.short.name>apache2</license.short.name>
-		<vaadin.version>7.1.15</vaadin.version>
-		<vaadin.plugin.version>7.1.15</vaadin.plugin.version>
+		<vaadin.version>7.2.6</vaadin.version>
+		<vaadin.plugin.version>7.2.6</vaadin.plugin.version>
 		
 		<!-- Must not change this because of the Directory -->
 		<Implementation-Title>BeforeUnload</Implementation-Title>

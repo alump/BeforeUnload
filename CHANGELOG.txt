@@ -1,7 +1,11 @@
-### 0.2.0 - 2013-02-26 ###
+### 0.2.1 - 2014-08-?? ###
+* Fix years in this files
+* Client side disablePermanently API (by https://github.com/kumm)
+
+### 0.2.0 - 2014-02-26 ###
 * Adds client side API for disabling exit verification. Can be eg. used when
   force reloading page after connection error.
   https://github.com/alump/BeforeUnload/wiki/How-to-disable-verification-dialog-when-connection-error
 
-### 0.1.0 - 2013-02-25 ###
+### 0.1.0 - 2014-02-25 ###
 * Initial release

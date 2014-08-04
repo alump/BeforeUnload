@@ -36,12 +36,13 @@ public class BeforeUnloadConnector extends AbstractExtensionConnector {
     private HandlerRegistration winCloseRegistration;
 
     private static long temporaryDisabled = new Date().getTime();
+    private static boolean permanentlyDisabled = false;
 
     private final Window.ClosingHandler closingHandler = new Window.ClosingHandler() {
 
         @Override
         public void onWindowClosing(Window.ClosingEvent closingEvent) {
-            if(!isTemporaryDisabled() && getState().message != null) {
+            if (!isDisabled() && getState().message != null) {
                 closingEvent.setMessage(getState().message);
             }
         }
@@ -83,12 +84,21 @@ public class BeforeUnloadConnector extends AbstractExtensionConnector {
     }
 
     /**
-     * Check if exit verification is temporary disabled right now.
-     * @return true if disabled
+     * Way to permanently disable verification.
+     * This can be used to avoid error when user manually reloading after
+     * a connection error, or session timeout error.
      */
-    public static boolean isTemporaryDisabled() {
-        return new Date().getTime() < temporaryDisabled;
+    public static void disablePermanently() {
+        BeforeUnloadConnector.permanentlyDisabled = true;
     }
 
+    /**
+     * Check if exit verification is temporary disabled right now,
+     * or permanently disabled.
+     * @return true if disabled
+     */
+    public static boolean isDisabled() {
+        return permanentlyDisabled || new Date().getTime() < temporaryDisabled;
+    }
 
 }

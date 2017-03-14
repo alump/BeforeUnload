@@ -1,7 +1,7 @@
 package org.vaadin.alump.beforeunload.demo;
 
 import com.vaadin.annotations.Title;
-import com.vaadin.data.Property;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.*;
 import org.vaadin.alump.beforeunload.BeforeUnload;
@@ -12,54 +12,28 @@ import org.vaadin.alump.beforeunload.BeforeUnload;
 @Title("BeforeUnload Demo")
 public class BeforeUnloadDemoUI extends UI {
 
-    private TextField messageField;
-    private CheckBox checkbox;
-    public final static String DEFAULT_MESSAGE = "Please do not leave! I'm lonely :(";
-
     @Override
     protected void init(VaadinRequest vaadinRequest) {
+        // In this example before upload will be enabled by default
+        BeforeUnload.enable();
+
         VerticalLayout layout = new VerticalLayout();
-        layout.setWidth("100%");
+        layout.setWidth(100, Unit.PERCENTAGE);
         layout.setSpacing(true);
         layout.setMargin(true);
         setContent(layout);
 
-        BeforeUnload.setExitVerification(DEFAULT_MESSAGE);
+        CheckBox checkbox = new CheckBox("Verify that user really wants to leave the page",
+                BeforeUnload.isEnabled());
+        checkbox.addValueChangeListener(event -> BeforeUnload.setEnabled(event.getValue()));
 
-        Label guide = new Label("Exit verification message is shown when you leave or reload the page.");
-        guide.setWidth("100%");
-        layout.addComponent(guide);
+        Button disableForTwoSeconds = new Button("Temporary disable for 2 seconds on client side",
+                e -> BeforeUnload.temporaryDisable(2000L));
 
-        messageField = new TextField();
-        messageField.setImmediate(true);
-        messageField.setValue(BeforeUnload.getExitVerification());
-        messageField.setWidth("100%");
-        messageField.setCaption("Exit verification message:");
-        messageField.setInputPrompt("Write verification message here");
-        messageField.addValueChangeListener(new Property.ValueChangeListener() {
-            @Override
-            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
-                if(checkbox.getValue()) {
-                    BeforeUnload.setExitVerification((String)valueChangeEvent.getProperty().getValue());
-                }
-            }
-        });
-        layout.addComponent(messageField);
-
-        checkbox = new CheckBox("Enabled");
-        checkbox.setImmediate(true);
-        checkbox.setValue(BeforeUnload.hasExitVerification());
-        checkbox.addValueChangeListener(new Property.ValueChangeListener() {
-            @Override
-            public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
-                boolean value = (Boolean)valueChangeEvent.getProperty().getValue();
-                if(value) {
-                    BeforeUnload.setExitVerification(messageField.getValue());
-                } else {
-                    BeforeUnload.unsetExitVerification();
-                }
-            }
-        });
-        layout.addComponent(checkbox);
+        layout.addComponents(
+                new Label("Exit verification message is shown when you leave or reload the page."),
+                checkbox,
+                disableForTwoSeconds,
+                new Link("Project at GitHub", new ExternalResource("https://github.com/alump/BeforeUnLoad")));
     }
 }

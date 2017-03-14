@@ -23,6 +23,7 @@ import com.google.gwt.user.client.Window;
 import com.vaadin.client.ServerConnector;
 import com.vaadin.client.extensions.AbstractExtensionConnector;
 import com.vaadin.shared.ui.Connect;
+import org.vaadin.alump.beforeunload.gwt.client.share.BeforeUnloadClientRpc;
 import org.vaadin.alump.beforeunload.gwt.client.share.BeforeUnloadState;
 
 import java.util.Date;
@@ -34,27 +35,34 @@ import java.util.Date;
 public class BeforeUnloadConnector extends AbstractExtensionConnector {
 
     private HandlerRegistration winCloseRegistration;
+    private long temporaryDisabled = new Date().getTime();
 
-    private static long temporaryDisabled = new Date().getTime();
-    private static boolean permanentlyDisabled = false;
+    private static BeforeUnloadConnector instance;
 
-    private final Window.ClosingHandler closingHandler = new Window.ClosingHandler() {
+    private final BeforeUnloadClientRpc clientRpc = milliSecs -> {
+        BeforeUnloadConnector.this.setTemporaryDisabled(milliSecs);
+    };
 
-        @Override
-        public void onWindowClosing(Window.ClosingEvent closingEvent) {
-            if (!isDisabled() && getState().message != null) {
-                closingEvent.setMessage(getState().message);
-            }
+    private final Window.ClosingHandler closingHandler = closingEvent -> {
+        if (isEnabled()) {
+            closingEvent.setMessage(getMessage());
+        } else {
+            closingEvent.setMessage(null);
         }
     };
 
     protected void init() {
         super.init();
-
+        registerRpc(BeforeUnloadClientRpc.class, clientRpc);
+        instance = this;
         winCloseRegistration = Window.addWindowClosingHandler(closingHandler);
     }
 
     public void onUnregister() {
+        if(instance == this) {
+            instance = null;
+        }
+
         if(winCloseRegistration != null) {
             winCloseRegistration.removeHandler();
             winCloseRegistration = null;
@@ -80,25 +88,25 @@ public class BeforeUnloadConnector extends AbstractExtensionConnector {
      *                  in milliseconds.
      */
     public static void disableTemporary(long millisecs) {
+        if(instance != null) {
+            instance.setTemporaryDisabled(millisecs);
+        }
+    }
+
+    protected void setTemporaryDisabled(long millisecs) {
         temporaryDisabled = new Date().getTime() + millisecs;
     }
 
     /**
-     * Way to permanently disable verification.
-     * This can be used to avoid error when user manually reloading after
-     * a connection error, or session timeout error.
+     * Check if before unload warning is enabled
+     * @return true if enabled
      */
-    public static void disablePermanently() {
-        BeforeUnloadConnector.permanentlyDisabled = true;
+    public boolean isEnabled() {
+        return getState().enabled && new Date().getTime() >= temporaryDisabled;
     }
 
-    /**
-     * Check if exit verification is temporary disabled right now,
-     * or permanently disabled.
-     * @return true if disabled
-     */
-    public static boolean isDisabled() {
-        return permanentlyDisabled || new Date().getTime() < temporaryDisabled;
+    protected String getMessage() {
+        return getState().message;
     }
 
 }

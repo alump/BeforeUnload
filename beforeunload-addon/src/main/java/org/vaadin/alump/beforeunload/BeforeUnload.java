@@ -21,14 +21,16 @@ package org.vaadin.alump.beforeunload;
 import com.vaadin.server.AbstractExtension;
 import com.vaadin.server.Extension;
 import com.vaadin.ui.UI;
+import org.vaadin.alump.beforeunload.gwt.client.share.BeforeUnloadClientRpc;
 import org.vaadin.alump.beforeunload.gwt.client.share.BeforeUnloadState;
 
+import java.util.Objects;
+import java.util.Optional;
+
 /**
- * Simple extension that offers access to onBeforeUnload events and this way
- * adding verification dialogs when user is trying to exit/reload the
- * application page. In normal use case you want to call
- * BeforeUnload.setExitVerification(message) to enable verification and then
- * BeforeUnload.unsetExitVerification() to disable it.
+ * Simple extension that offers access to onBeforeUnload events and this way adding verification dialogs when user is
+ * trying to exit/reload the application page. In normal use case you want to call BeforeUnload.enable(); to enable
+ * BeforeUnload, and then later (when it is fine to leave the site) disable it with BeforeUnload.disable();
  */
 public class BeforeUnload extends AbstractExtension {
     protected BeforeUnload() {
@@ -36,11 +38,61 @@ public class BeforeUnload extends AbstractExtension {
     }
 
     /**
+     * Optionally get current existing instance of BeforeUnload
+     * @return empty if not found or if UI context could not be resolved
+     */
+    protected static Optional<BeforeUnload> optionalGet() {
+        return optionalGet(UI.getCurrent());
+    }
+
+    /**
+     * Optionally get current existing instance of BeforeUnload
+     * @return empty if not found
+     */
+    protected static Optional<BeforeUnload> optionalGet(UI currentUI) {
+        if(currentUI == null) {
+            return Optional.empty();
+        }
+
+        for(Extension extension : currentUI.getExtensions()) {
+            if(extension instanceof BeforeUnload) {
+                return Optional.of((BeforeUnload)extension);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Get instance message. This method is marked protected as most of modern browsers do not anymore show the
+     * message defined on before unload API, so offering it on API would confuse users. If you still want to access this
+     * just extend class and make this public.
+     * @return Message
+     */
+    protected Optional<String> getInstanceMessage() {
+        return Optional.ofNullable(getState(false).message);
+    }
+
+    /**
+     * Set instance message. This method is marked protected as most of modern browsers do not anymore show the
+     * message defined on before unload API, so offering it on API would confuse users. If you still want to access this
+     * just extend class and make this public.
+     * @param message
+     */
+    protected void setInstanceMessage(String message) {
+        getState().message = Objects.requireNonNull(message);
+    }
+
+    /**
      * Get current "singleton" instance of BeforeUnload
      * @param currentUI UI used to resolve instance
      * @return BeforeUnload instance
      */
-    protected static BeforeUnload get(UI currentUI) {
+    protected static BeforeUnload get(UI currentUI) throws IllegalStateException {
+        if(currentUI == null) {
+            throw new IllegalStateException("Current UI not defined");
+        }
+
         for(Extension extension : currentUI.getExtensions()) {
             if(extension instanceof BeforeUnload) {
                 return (BeforeUnload)extension;
@@ -60,87 +112,126 @@ public class BeforeUnload extends AbstractExtension {
     }
 
     /**
-     * Define exit verification shown to user.
-     * @param message Message shown to user
+     * Check if instance is enabled or disabled
+     * @return true if enabled, false if disabled
      */
-    public static void setExitVerification(String message) {
-        get().setMessage(message);
+    protected boolean isInstanceEnabled() {
+        return getState(false).enabled;
     }
 
     /**
-     * Define exit verification shown to user. Alternative version for outside UI context calls.
-     * @param message Message shown to user
-     * @param currentUI UI used to resolve extension
+     * Enable or disable instance
+     * @param enabled true to enable, false to disable
      */
-    public static void setExitVerification(String message, UI currentUI) {
-        get(currentUI).setMessage(message);
+    protected void setInstanceEnabled(boolean enabled) {
+        getState().enabled = enabled;
     }
 
     /**
-     * Check if exit verification has been defined for this extension.
-     * @return
+     * Temporary disable on client side for given amount of milliseconds. Remember that time spent sending command to
+     * client side is not included in given time.
+     * @param millisec Milliseconds client side will disable beforeunload
      */
-    public static boolean hasExitVerification() {
-        return getExitVerification() != null;
+    protected void temporaryDisableInstance(long millisec) {
+        if(millisec < 0L) {
+            throw new IllegalArgumentException("Invalid amount of milliseconds given " + millisec);
+        }
+        getRpcProxy(BeforeUnloadClientRpc.class).disableTemporary(millisec);
     }
 
     /**
-     * Check if exit verification has been defined for this extension. Alternative version for outside UI context calls.
-     * @param currentUI UI used to resolve extension
-     * @return
+     * Set BeforeUnload enabled or disabled
+     * @param ui UI where BeforeUnload should be enabled or disabled
+     * @param enabled true to enable, false to disable
      */
-    public static boolean hasExitVerification(UI currentUI) {
-        return getExitVerification(currentUI) != null;
+    public static void setEnabled(UI ui, boolean enabled) {
+        get(Objects.requireNonNull(ui)).setInstanceEnabled(enabled);
     }
 
     /**
-     * Get exit verification message.
-     * @return Message if defined, null if not
+     * Set BeforeUnload enabled or disabled in current UI context
+     * @param enabled true to enable, false to disable
+     * @throws IllegalStateException If UI can not be resolved from context
      */
-    public static String getExitVerification() {
-        return get().getMessage();
+    public static void setEnabled(boolean enabled) throws IllegalStateException {
+        get().setInstanceEnabled(enabled);
     }
 
     /**
-     * Get exit verification message. Alternative version for outside UI context calls.
-     * @param currentUI UI used to resolve extension
-     * @return Message if defined, null if not
+     * Enable before unloading verification on current UI
+     * @throws IllegalStateException If UI can not be resolved from context
      */
-    public static String getExitVerification(UI currentUI) {
-        return get(currentUI).getMessage();
+    public static void enable() throws IllegalStateException {
+        setEnabled(true);
     }
 
     /**
-     * Unset exit verification defined earlier.
+     * Disable before unloading verification on current UI
+     * @throws IllegalStateException If UI can not be resolved from context
      */
-    public static void unsetExitVerification() {
-        get().setMessage(null);
+    public static void disable() throws IllegalStateException {
+        setEnabled(false);
     }
 
     /**
-     * Unset exit verification.  Alternative version for outside UI context calls.
+     * Enable at given UI
+     * @param ui UI where verification will be asked when leaving
      */
-    public static void unsetExitVerification(UI currentUI) {
-        get(currentUI).setMessage(null);
+    public static void enable(UI ui) {
+        setEnabled(ui,true);
     }
 
+    /**
+     * Disable at given UI
+     * @param ui UI where verification will not be asked when leaving
+     */
+    public static void disable(UI ui) {
+        optionalGet(ui).map(beforeUnload -> beforeUnload.isInstanceEnabled()).orElse(false);
+        setEnabled(ui, false);
+    }
+
+    /**
+     * Check if BeforeUnload is enabled of current UI. If current UI can not be resolved will always return false.
+     * @return true if enabled, false if not
+     */
+    public static boolean isEnabled() {
+        return optionalGet().map(beforeUnload -> beforeUnload.isInstanceEnabled()).orElse(false);
+    }
+
+    /**
+     * Check if BeforeUnload is enabled of current UI
+     * @return true if enabled, false if not
+     */
+    public static boolean isEnabled(UI ui) {
+        return optionalGet(Objects.requireNonNull(ui))
+                .map(beforeUnload -> beforeUnload.isInstanceEnabled())
+                .orElse(false);
+    }
+
+    /**
+     * Temporary disable on client side for given time. Might be useful when client side might cause navigation event.
+     * @param ui UI with before unload
+     * @param millisecs How many milliseconds the client side should be temporary disabled
+     */
+    public static void temporaryDisable(UI ui, long millisecs) {
+        optionalGet(ui).ifPresent(bu -> bu.temporaryDisableInstance(millisecs));
+    }
+
+    /**
+     * Temporary disable on client side for given time. Might be useful when client side might cause navigation event.
+     * @param millisecs How many milliseconds the client side should be temporary disabled
+     */
+    public static void temporaryDisable(long millisecs) {
+        optionalGet().ifPresent(bu -> bu.temporaryDisableInstance(millisecs));
+    }
+
+    @Override
     protected BeforeUnloadState getState() {
         return (BeforeUnloadState)super.getState();
     }
 
-    /**
-     * Define verification message shown to user
-     * @param message Message shown to user
-     */
-    protected void setMessage(String message) {
-        getState().message = message;
-    }
-
-    /**
-     * Get verification message defined.
-     * @return Message or null if not defined
-     */
-    protected String getMessage() {
-        return getState().message;
+    @Override
+    protected BeforeUnloadState getState(boolean markDirty) {
+        return (BeforeUnloadState)super.getState(markDirty);
     }
 }

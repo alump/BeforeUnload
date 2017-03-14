@@ -24,5 +24,6 @@ import com.vaadin.shared.communication.SharedState;
  * State of BeforeUnload extension
  */
 public class BeforeUnloadState extends SharedState {
-    public String message = null;
+    // Some older browser still support message
+    public String message = "Do you want to leave this site?";
 }

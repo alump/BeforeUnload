@@ -7,7 +7,7 @@
 	<packaging>war</packaging>
 	<name>BeforeUnload demo</name>
 	<description>BeforeUnload Demo Application</description>
-	<version>0.3.0-SNAPSHOT</version>
+	<version>0.3.0</version>
 
     <properties>
         <Implementation-Version>${project.version}</Implementation-Version>

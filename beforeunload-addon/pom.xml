@@ -5,7 +5,7 @@
 	<artifactId>beforeunload-addon</artifactId>
 	<packaging>jar</packaging>
 	<name>BeforeUnload addon</name>
-	<version>0.3.0</version>
+	<version>0.3.1-SNAPSHOT</version>
 
     <description>BeforeUnload Vaadin 8 addon</description>
 

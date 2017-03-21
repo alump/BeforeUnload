@@ -4,6 +4,7 @@ import com.vaadin.annotations.Title;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 import org.vaadin.alump.beforeunload.BeforeUnload;
 
 /**
@@ -23,6 +24,9 @@ public class BeforeUnloadDemoUI extends UI {
         layout.setMargin(true);
         setContent(layout);
 
+        Label header = new Label("BeforeUnload Vaadin add-on");
+        header.addStyleName(ValoTheme.LABEL_H1);
+
         CheckBox checkbox = new CheckBox("Verify that user really wants to leave the page",
                 BeforeUnload.isEnabled());
         checkbox.addValueChangeListener(event -> BeforeUnload.setEnabled(event.getValue()));
@@ -30,7 +34,7 @@ public class BeforeUnloadDemoUI extends UI {
         Button disableForTwoSeconds = new Button("Temporary disable for 2 seconds on client side",
                 e -> BeforeUnload.temporaryDisable(2000L));
 
-        layout.addComponents(
+        layout.addComponents(header,
                 new Label("Exit verification message is shown when you leave or reload the page."),
                 checkbox,
                 disableForTwoSeconds,

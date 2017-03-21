@@ -7,7 +7,7 @@
 	<packaging>war</packaging>
 	<name>BeforeUnload demo</name>
 	<description>BeforeUnload Demo Application</description>
-	<version>0.3.0</version>
+	<version>0.3.1-SNAPSHOT</version>
 
     <properties>
         <Implementation-Version>${project.version}</Implementation-Version>
@@ -101,37 +101,31 @@
 				<groupId>com.vaadin</groupId>
 				<artifactId>vaadin-maven-plugin</artifactId>
 				<version>${vaadin.plugin.version}</version>
-
 				<configuration>
-					<webappDirectory>src/main/webapp/VAADIN/widgetsets</webappDirectory>
-					<hostedWebapp>src/main/webapp/VAADIN/widgetsets</hostedWebapp>
-
-					<modules>
-						<module>org.vaadin.alump.beforeunload.demo.gwt.BeforeUnloadDemoWidgetSet</module>
-					</modules>
-
-					<force>true</force>
 					<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
+					<webappDirectory>${basedir}/src/main/webapp/VAADIN/widgetsets</webappDirectory>
+					<hostedWebapp>${basedir}/src/main/webapp/VAADIN/widgetsets</hostedWebapp>
 					<noServer>true</noServer>
-					<runTarget>http://localhost:8080/beforeunload</runTarget>
-					<port>8080</port>
-					<draftCompile>false</draftCompile>
-					<!-- <style>OBF</style> -->
-					<style>OBF</style>
-					<force>true</force>
+					<persistentunitcachedir>${basedir}/target/tmp/gwt-unitCache</persistentunitcachedir>
+					<compileReport>true</compileReport>
 					<strict>true</strict>
-					<compileReport>false</compileReport>
+					<runTarget>http://localhost:8080/</runTarget>
 				</configuration>
-				
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>resources</goal>
-                            <goal>compile</goal>
-                            <goal>test</goal>
-                        </goals>
-                    </execution>
-                </executions>
+				<executions>
+					<!-- You are free to mark this as permanently ignored in Eclipse -->
+					<execution>
+						<configuration>
+							<!-- if you don't specify any modules, the plugin will find them -->
+						</configuration>
+						<goals>
+							<goal>resources</goal>
+							<goal>update-widgetset</goal>
+							<goal>update-theme</goal>
+							<goal>compile-theme</goal>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>

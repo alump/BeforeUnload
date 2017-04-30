@@ -1,4 +1,6 @@
-#BeforeUnload Vaadin UI Extension Add On
+# BeforeUnload Vaadin UI Extension Add On
+
+[![Build Status](https://epic.siika.fi/jenkins/job/BeforeUnload%20(Vaadin)/badge/icon)](https://epic.siika.fi/jenkins/job/BeforeUnload%20(Vaadin)/)
 
 BeforeUnload offers server side access to BeforeUnload API
 

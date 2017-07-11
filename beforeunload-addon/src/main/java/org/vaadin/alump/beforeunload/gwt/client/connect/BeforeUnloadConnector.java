@@ -36,6 +36,7 @@ public class BeforeUnloadConnector extends AbstractExtensionConnector {
 
     private HandlerRegistration winCloseRegistration;
     private long temporaryDisabled = new Date().getTime();
+    private static boolean permanentlyDisabled = false;
 
     private static BeforeUnloadConnector instance;
 
@@ -59,11 +60,11 @@ public class BeforeUnloadConnector extends AbstractExtensionConnector {
     }
 
     public void onUnregister() {
-        if(instance == this) {
+        if (instance == this) {
             instance = null;
         }
 
-        if(winCloseRegistration != null) {
+        if (winCloseRegistration != null) {
             winCloseRegistration.removeHandler();
             winCloseRegistration = null;
         }
@@ -77,18 +78,19 @@ public class BeforeUnloadConnector extends AbstractExtensionConnector {
     }
 
     public BeforeUnloadState getState() {
-        return (BeforeUnloadState)super.getState();
+        return (BeforeUnloadState) super.getState();
     }
 
     /**
      * Way to temporary disable verification. This can be used to avoid
      * error when forcing page reload on client side (eg. connection
      * error at ApplicationConnection).
+     *
      * @param millisecs How long exit verification should be disabled
      *                  in milliseconds.
      */
     public static void disableTemporary(long millisecs) {
-        if(instance != null) {
+        if (instance != null) {
             instance.setTemporaryDisabled(millisecs);
         }
     }
@@ -98,11 +100,21 @@ public class BeforeUnloadConnector extends AbstractExtensionConnector {
     }
 
     /**
+     * Way to permanently disable verification.
+     * This can be used to avoid error when user manually reloading after
+     * a connection error, or session timeout error.
+     */
+    public static void disablePermanently() {
+        permanentlyDisabled = true;
+    }
+
+    /**
      * Check if before unload warning is enabled
+     *
      * @return true if enabled
      */
     public boolean isEnabled() {
-        return getState().enabled && new Date().getTime() >= temporaryDisabled;
+        return getState().enabled && !permanentlyDisabled && new Date().getTime() >= temporaryDisabled;
     }
 
     protected String getMessage() {

@@ -35,7 +35,7 @@ import java.util.Date;
 public class BeforeUnloadConnector extends AbstractExtensionConnector {
 
     private HandlerRegistration winCloseRegistration;
-    private long temporaryDisabled = new Date().getTime();
+    private long temporaryDisabled = getTime();
     private static boolean permanentlyDisabled = false;
 
     private static BeforeUnloadConnector instance;
@@ -96,7 +96,7 @@ public class BeforeUnloadConnector extends AbstractExtensionConnector {
     }
 
     protected void setTemporaryDisabled(long millisecs) {
-        temporaryDisabled = new Date().getTime() + millisecs;
+        temporaryDisabled = getTime() + millisecs;
     }
 
     /**
@@ -114,7 +114,11 @@ public class BeforeUnloadConnector extends AbstractExtensionConnector {
      * @return true if enabled
      */
     public boolean isEnabled() {
-        return getState().enabled && !permanentlyDisabled && new Date().getTime() >= temporaryDisabled;
+        return getState().enabled && !permanentlyDisabled && getTime() >= temporaryDisabled;
+    }
+
+    private long getTime() {
+        return new Date().getTime();
     }
 
     protected String getMessage() {

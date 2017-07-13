@@ -7,7 +7,7 @@
 	<packaging>war</packaging>
 	<name>BeforeUnload demo</name>
 	<description>BeforeUnload Demo Application</description>
-	<version>0.3.1-SNAPSHOT</version>
+	<version>0.3.1</version>
 
     <properties>
         <Implementation-Version>${project.version}</Implementation-Version>
@@ -16,7 +16,7 @@
 		
 		<!-- May be overridden by the build system -->
 		<license.short.name>apache2</license.short.name>
-		<vaadin.version>8.0.2</vaadin.version>
+		<vaadin.version>8.0.6</vaadin.version>
 		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
 		<jetty.plugin.version>9.3.9.v20160517</jetty.plugin.version>
 		

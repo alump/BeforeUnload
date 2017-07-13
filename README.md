@@ -13,8 +13,8 @@ Vaadin Directory: https://vaadin.com/directory#addon/beforeunload
 License: Apache License 2.0
 
 ### Changelog
-#### 0.3.1 - TBD
-* TBD
+#### 0.3.1 - 2017-07-12
+* disablePermanently API for client side by [Benedek Herold](https://github.com/Hedath)
 
 #### 0.3.0 - 2017-03-13
 * API simplified as modern browsers do not anymore show message given by API

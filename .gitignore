@@ -5,3 +5,4 @@ beforeunload-demo/beforeunload-demo.iml
 beforeunload-demo/target/
 beforeunload-demo/src/main/webapp/VAADIN/widgetsets/
 beforeunload-demo/src/main/webapp/VAADIN/gwt-unitCache/
+*.iml

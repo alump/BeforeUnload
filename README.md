@@ -1,3 +1,6 @@
+[![Published on Vaadin  Directory](https://img.shields.io/badge/Vaadin%20Directory-published-00b4f0.svg)](https://vaadin.com/directory/component/beforeunload)
+[![Stars on vaadin.com/directory](https://img.shields.io/vaadin-directory/star/beforeunload.svg)](https://vaadin.com/directory/component/beforeunload)
+
 # BeforeUnload Vaadin UI Extension Add On
 
 [![Build Status](https://epic.siika.fi/jenkins/job/BeforeUnload%20(Vaadin)/badge/icon)](https://epic.siika.fi/jenkins/job/BeforeUnload%20(Vaadin)/)
